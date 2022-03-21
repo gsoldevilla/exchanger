@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+    db:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "12345678"
+            POSTGRES_HOST: "postgres"
+        ports:
+            - 5432:5432
+        volumes:
+            - ./var/lib/postgresql:/var/lib/postgresql
+            - ./var/lib/postgresql/data:/var/lib/postgresql/data
+
+    app:
+        depends_on:
+            - db
+        build: .
+        environment:
+            DB_URI: "r2dbc:postgresql://postgres:12345678@db:5432/exchanger?schema=public"
+            JWT_SECRET_KEY: "Yq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%"
+            JWT_EXPIRATION_TIME: 3600
+        ports:
+            - 8080:8080
