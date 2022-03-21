@@ -42,7 +42,9 @@ public class WebSecurityConfig {
             .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
             .authorizeExchange(x -> x
                 .pathMatchers(HttpMethod.GET, PATH_CURRENCIES).authenticated()
+                .pathMatchers(HttpMethod.GET, PATH_EXCHANGES).authenticated()
                 .pathMatchers(HttpMethod.POST, PATH_EXCHANGES).authenticated()
+                .pathMatchers(HttpMethod.GET, PATH_EXCHANGE_RATES).authenticated()
                 .pathMatchers(HttpMethod.POST, PATH_EXCHANGE_RATES).authenticated()
                 .pathMatchers(HttpMethod.POST, PATH_TOKENS).permitAll()
                 .anyExchange().permitAll()

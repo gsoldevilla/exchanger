@@ -6,11 +6,9 @@ import com.exchanger.api.exchangerapi.service.ExchangeService;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -23,5 +21,10 @@ public class ExchangeController {
     @PostMapping
     public Mono<Exchange> create(@RequestBody @Valid Exchange exchange) {
         return exchangeService.create(exchange);
+    }
+
+    @GetMapping
+    public Flux<Exchange> getAll() {
+        return exchangeService.getAll();
     }
 }
