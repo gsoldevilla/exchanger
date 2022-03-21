@@ -1,14 +1,18 @@
 package com.exchanger.api.exchangerapi.controller;
 
 import com.exchanger.api.exchangerapi.entity.api.CreateTokenRequest;
-import com.exchanger.api.exchangerapi.entity.api.CreateTokenResponse;
-import com.exchanger.api.exchangerapi.security.PBKDF2PasswordEncoder;
-import com.exchanger.api.exchangerapi.service.UserService;
-import com.exchanger.api.exchangerapi.util.JwtUtil;
 
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import com.exchanger.api.exchangerapi.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,19 +25,26 @@ import reactor.core.publisher.Mono;
 public class TokenController {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtProvider jwtProvider;
 
     @Autowired
-    private PBKDF2PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserService userService;
+    private ReactiveAuthenticationManager authenticationManager;
 
     @PostMapping
-    public Mono<ResponseEntity<CreateTokenResponse>> login(@RequestBody CreateTokenRequest request) {
-        return userService.getByUsername(request.getUsername())
-            .filter(userDetails -> passwordEncoder.encode(request.getPassword()).equals(userDetails.getPassword()))
-            .map(userDetails -> ResponseEntity.ok(new CreateTokenResponse(jwtUtil.generateToken(userDetails))))
-            .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()));
+    public Mono<ResponseEntity<Map<String, String>>> create(@RequestBody @Valid Mono<CreateTokenRequest> request) {
+        return request
+            .flatMap(rq -> authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(rq.getUsername(), rq.getPassword()))
+                .map(jwtProvider::createToken)
+            )
+            .map(jwt -> {
+                HttpHeaders httpHeaders = new HttpHeaders();
+
+                httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + jwt);
+
+                Map<String, String> body = Map.of("access_token", jwt);
+
+                return new ResponseEntity<>(body, httpHeaders, HttpStatus.OK);
+            });
     }
 }

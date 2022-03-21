@@ -1,12 +1,11 @@
 package com.exchanger.api.exchangerapi.entity.database;
 
-import com.exchanger.api.exchangerapi.entity.Role;
+import com.exchanger.api.exchangerapi.type.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.Email;
 
@@ -26,7 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 public class User implements UserDetails {
 
-    private static final long serialVersionUID = -8888149524493612739L;
+    private static final long serialVersionUID = 9126062025805010812L;
 
     @Id
     private Integer id;
@@ -43,32 +42,35 @@ public class User implements UserDetails {
     private boolean active = true;
 
     @Builder.Default()
-    private List<Role> roles = new ArrayList<>();
+    private List<String> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles
-            .stream()
-            .map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList());
+        List<GrantedAuthority> roles = new ArrayList<>();
+
+        roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.name()));
+        roles.add(new SimpleGrantedAuthority(RoleType.ROLE_USER.name()));
+
+        return roles;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return this.active;
+        return true;
     }
 }

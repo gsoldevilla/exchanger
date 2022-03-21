@@ -1,8 +1,10 @@
 package com.exchanger.api.exchangerapi.entity.database;
 
+import com.exchanger.api.exchangerapi.type.ExchangeRateType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,23 +35,25 @@ public class ExchangeRate {
 
     private BigDecimal value;
 
+    private ExchangeRateType type;
+
     @CreatedBy
     @Column("createdBy")
     @JsonIgnore
-    private String createdBy;
+    private Integer createdBy;
 
     @CreatedDate
-    @Column("creationDate")
+    @Column("createdAt")
     @JsonIgnore
-    private Long creationDate;
+    private LocalDateTime createdAt;
 
     @LastModifiedBy
     @Column("modifiedBy")
     @JsonIgnore
-    private String modifiedBy;
+    private Integer modifiedBy;
 
     @LastModifiedDate
-    @Column("modificationDate")
+    @Column("modifiedAt")
     @JsonIgnore
-    private Long modificationDate;
+    private LocalDateTime modifiedAt;
 }

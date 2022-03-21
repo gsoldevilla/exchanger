@@ -14,10 +14,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public Mono<User> create(User user) {
-        return userRepository.save(user);
-    }
-
     public Mono<User> getByUsername(String username) {
         return userRepository.findByUsername(username);
     }
