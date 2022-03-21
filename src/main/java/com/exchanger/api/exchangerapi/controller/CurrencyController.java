@@ -1,6 +1,6 @@
 package com.exchanger.api.exchangerapi.controller;
 
-import com.exchanger.api.exchangerapi.entity.Currency;
+import com.exchanger.api.exchangerapi.entity.database.Currency;
 import com.exchanger.api.exchangerapi.service.CurrencyService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,6 @@ public class CurrencyController {
 
     @GetMapping
     public Flux<Currency> getAll() {
-        return  currencyService.getAll();
+        return currencyService.getAll();
     }
 }

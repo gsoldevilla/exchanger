@@ -1,6 +1,8 @@
-package com.exchanger.api.exchangerapi.entity;
+package com.exchanger.api.exchangerapi.entity.database;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,18 +20,18 @@ import org.springframework.data.relational.core.mapping.Column;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Currency {
+public class ExchangeRate {
 
     @Id
     private Integer id;
 
-    private String code;
+    @Column("sourceCurrencyId")
+    private Integer sourceCurrencyId;
 
-    private String symbol;
+    @Column("targetCurrencyId")
+    private Integer targetCurrencyId;
 
-    private String name;
-
-    private Boolean obsolete;
+    private BigDecimal value;
 
     @CreatedBy
     @Column("createdBy")

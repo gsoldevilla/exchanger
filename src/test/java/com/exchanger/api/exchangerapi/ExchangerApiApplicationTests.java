@@ -9,5 +9,4 @@ class ExchangerApiApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
