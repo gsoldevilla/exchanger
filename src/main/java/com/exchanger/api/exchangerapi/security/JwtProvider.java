@@ -1,5 +1,8 @@
 package com.exchanger.api.exchangerapi.security;
 
+import com.exchanger.api.exchangerapi.entity.database.User;
+
+import com.exchanger.api.exchangerapi.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -18,11 +21,10 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.joining;
@@ -35,6 +37,9 @@ public class JwtProvider {
     private static final String AUTHORITIES_KEY = "roles";
 
     private SecretKey secretKey;
+
+    @Autowired
+    private UserService userService;
 
     @PostConstruct
     public void init() {
@@ -64,12 +69,14 @@ public class JwtProvider {
 
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
-        Object authoritiesClaim = claims.get(AUTHORITIES_KEY);
-        Collection<? extends GrantedAuthority> authorities = authoritiesClaim == null ? AuthorityUtils.NO_AUTHORITIES
-            : AuthorityUtils.commaSeparatedStringToAuthorityList(authoritiesClaim.toString());
-        User principal = new User(claims.getSubject(), "", authorities);
+        User principal = new User();
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        principal.setId(1);
+        principal.setUsername(claims.getSubject());
+        principal.setPassword("$2a$10$gi1sxlepFRgjn7488Jkw3OCTL13ROxMdggaM6icALZhG9e4dbk3Ie");
+        principal.setEmail("jgonzalezso@exchange.com.pe");
+
+        return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
     }
 
     public boolean validateToken(String token) {

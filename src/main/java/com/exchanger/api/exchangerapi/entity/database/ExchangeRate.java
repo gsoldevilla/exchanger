@@ -16,7 +16,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.relational.core.mapping.Column;
 
 @Builder
 @Data
@@ -27,10 +26,8 @@ public class ExchangeRate {
     @Id
     private Integer id;
 
-    @Column("sourceCurrencyId")
     private Integer sourceCurrencyId;
 
-    @Column("targetCurrencyId")
     private Integer targetCurrencyId;
 
     private BigDecimal value;
@@ -38,22 +35,18 @@ public class ExchangeRate {
     private ExchangeRateType type;
 
     @CreatedBy
-    @Column("createdBy")
     @JsonIgnore
     private Integer createdBy;
 
     @CreatedDate
-    @Column("createdAt")
     @JsonIgnore
     private LocalDateTime createdAt;
 
     @LastModifiedBy
-    @Column("modifiedBy")
     @JsonIgnore
     private Integer modifiedBy;
 
     @LastModifiedDate
-    @Column("modifiedAt")
     @JsonIgnore
     private LocalDateTime modifiedAt;
 }
